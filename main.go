@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"log"
+	"os"
 
 	"github.com/ryand67/teams-directory-go/pkg/credentials"
 	"github.com/ryand67/teams-directory-go/pkg/firebase"
@@ -9,8 +11,15 @@ import (
 
 func main() {
 	ctx := context.Background()
+
 	// Creates new firebase app instance
 	app := firebase.NewApp(ctx)
 
-	credentials.PromptLogin(app, ctx)
+	// Login or sign up, returns updated context
+	c, err := credentials.PromptLogin(app, ctx)
+	if err != nil {
+		log.Fatalf(err.Error())
+		os.Exit(1)
+	}
+	ctx = c
 }

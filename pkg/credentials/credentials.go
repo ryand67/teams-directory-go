@@ -17,10 +17,11 @@ func Login(app *firebase.App, e string, p string) error {
 	return nil
 }
 
-func SignUp(app *firebase.App, e string, p string, ctx context.Context) error {
+func SignUp(ctx context.Context, e string, p string, app *firebase.App) (context.Context, error) {
 	client, err := app.Auth(ctx)
 	if err != nil {
 		log.Fatalf("Error creating auth util: %v\n", err)
+		return nil, err
 	}
 	
 	params := (&auth.UserToCreate{}).Email(e).Password(p)
@@ -28,15 +29,16 @@ func SignUp(app *firebase.App, e string, p string, ctx context.Context) error {
 	u, err := client.CreateUser(ctx, params)
 	if err != nil {
 		log.Fatalf("Error creating user: %v\n", err)
+		return nil, err
 	}
 
 	log.Printf("Successfully created user: %v\n%v", e, u)
 	ctx = context.WithValue(ctx, "user", e)
 
-	return nil
+	return ctx, nil
 }
 
-func PromptLogin(app *firebase.App, ctx context.Context) error {
+func PromptLogin(app *firebase.App, ctx context.Context) (context.Context, error) {
 	fmt.Println("Sign-up, Login, or Exit? (S/L/Exit)")
 
 	// Sign up or login
@@ -62,8 +64,10 @@ func PromptLogin(app *firebase.App, ctx context.Context) error {
 	fmt.Scan(&p)
 
 	if strings.ToUpper(sOrL) == "S" {
-		SignUp(app, e, p, ctx)
-		fmt.Println(ctx.Value("user"))
+		c, err := SignUp(ctx, e, p, app)
+		if err != nil {
+			return c, err
+		}
 	} else if strings.ToUpper(sOrL) == "L" {
 		Login(app, e, p)
 	} else {
@@ -71,7 +75,7 @@ func PromptLogin(app *firebase.App, ctx context.Context) error {
 		PromptLogin(app, ctx)
 	}
 
-	return nil
+	return ctx, nil
 }
 
 func emailValid(email string) bool {
