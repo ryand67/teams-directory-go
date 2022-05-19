@@ -7,7 +7,7 @@ import (
 
 func main() {
 	// Creates new firebase app instance
-	fbApp := firebase.NewApp()
+	app := firebase.NewApp()
 
-	credentials.PromptLogin(fbApp)
+	credentials.PromptLogin(app)
 }
