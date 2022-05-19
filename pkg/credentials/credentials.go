@@ -42,7 +42,6 @@ func PromptLogin(app *firebase.App) error {
 
 	// Sign up or login
 	var sOrL string
-	
 	fmt.Scanln(&sOrL)
 
 	if strings.ToUpper(sOrL) == "EXIT" || strings.ToUpper(sOrL) == "E" {
@@ -50,16 +49,16 @@ func PromptLogin(app *firebase.App) error {
 	}
 
 	var e string
-	fmt.Println("What is your email: ")
+	log.Println("What is your email: ")
 	fmt.Scan(&e)
 
 	if valid := emailValid(e); !valid {
-		fmt.Println("Need a valid email!")
+		log.Println("Need a valid email!")
 		PromptLogin(app)
 	}
 	
 	var p string
-	fmt.Println("What is your password: ")
+	log.Println("What is your password: ")
 	fmt.Scan(&p)
 
 	if strings.ToUpper(sOrL) == "S" {
@@ -67,7 +66,7 @@ func PromptLogin(app *firebase.App) error {
 	} else if strings.ToUpper(sOrL) == "L" {
 		Login(app, e, p)
 	} else {
-		fmt.Println("Need a valid response (S/L/Exit)")
+		log.Println("Need a valid response (S/L/Exit)")
 		PromptLogin(app)
 	}
 

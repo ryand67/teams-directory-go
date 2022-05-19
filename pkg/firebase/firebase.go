@@ -9,6 +9,7 @@ import (
 )
 
 func NewApp() *firebase.App {
+	// Create new firebase app instance and return it
 	app, err := firebase.NewApp(context.Background(), nil, option.WithCredentialsFile("auth.json"))	
 	if err != nil {
 		fmt.Printf("ERR: %s", err)
