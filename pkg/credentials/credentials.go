@@ -1,6 +1,12 @@
 package credentials
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strings"
+
+	firebase "firebase.google.com/go/v4"
+)
 
 func Login() error {
 	return nil
@@ -10,18 +16,23 @@ func SignUp() error {
 	return nil
 }
 
-func PromptLogin() {
-	fmt.Println("Sign-up or Login? (S/L)")
+func PromptLogin(app *firebase.App) error {
+	fmt.Println("Sign-up, Login, or Exit? (S/L/Exit)")
+	// Sign up or login
 	var sOrL string
 
 	fmt.Scanln(&sOrL)
 
-	if sOrL == "S" || sOrL == "s" {
+	if strings.ToUpper(sOrL) == "S" {
 		SignUp()
-	} else if sOrL == "L" || sOrL == "l" {
+	} else if strings.ToUpper(sOrL) == "L" {
 		Login()
+	} else if strings.ToUpper(sOrL) == "EXIT" {
+		os.Exit(3)
 	} else {
 		fmt.Println("Need a valid response (S/L)")
-		PromptLogin()
+		PromptLogin(app)
 	}
+
+	return nil
 }
