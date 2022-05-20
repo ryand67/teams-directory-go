@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ryand67/teams-directory-go/pkg/credentials"
-	"github.com/ryand67/teams-directory-go/pkg/firebase"
+	"github.com/ryand67/teams-directory-go/credentials"
+	"github.com/ryand67/teams-directory-go/firebase"
 )
 
 func main() {
