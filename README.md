@@ -1,6 +1,6 @@
 # Teams Directory
 
-Quick Golang CLI app that allows you to manage your teams and employees
+Quick Go CLI app that allows you to manage your teams and employees
 
 ## Tech
 

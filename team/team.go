@@ -13,7 +13,7 @@ type UserDoc struct {
 	teams map[string]interface{}
 }
 
-func TeamList(ctx context.Context, app *firebase.App, teamName string) error {
+func TeamList(ctx context.Context, app *firebase.App) error {
 	ID := ctx.Value("docId")
 
 	client, err := app.Firestore(ctx)
@@ -35,5 +35,9 @@ func TeamList(ctx context.Context, app *firebase.App, teamName string) error {
 		fmt.Println(k)
 	}
 
+	return nil
+}
+
+func AddTeam(ctx context.Context, app *firebase.App) error {
 	return nil
 }

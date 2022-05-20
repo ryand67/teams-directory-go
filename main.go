@@ -10,6 +10,7 @@ import (
 	"github.com/ryand67/teams-directory-go/credentials"
 	"github.com/ryand67/teams-directory-go/firebase"
 	"github.com/ryand67/teams-directory-go/team"
+	"github.com/ryand67/teams-directory-go/util"
 )
 
 func main() {
@@ -44,17 +45,23 @@ func main() {
 	}
 
 	for {
+		// Read command
 		f.Print("> ")
 		var cmd string
 		f.Scanln(&cmd)
 
+		// Execute commands
 		switch s.ToLower(cmd) {
 		case "team-list", "tl":
-			team.TeamList(ctx, app, "team")
+			team.TeamList(ctx, app)
+		case "add-team", "at":
+			team.AddTeam(ctx, app)
 		case "exit", "x", "e":
 			log.Fatalf("Program terminated by user.")
+		case "help", "doc", "h", "d":
+			util.Help()
 		default:
-			f.Println("Invalid command, exec 'help' for list of commands.")
+			f.Println("Invalid command, exec 'help' or 'doc' for list of commands.")
 		}
 	}
 }
