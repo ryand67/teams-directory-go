@@ -103,7 +103,7 @@ func PromptLogin(app *firebase.App, ctx context.Context) (context.Context, error
 	fmt.Scan(&e)
 	e = strings.TrimSpace(e)
 
-	if valid := emailValid(e); !valid {
+	if valid := EmailValid(e); !valid {
 		log.Println("Need a valid email.")
 		PromptLogin(app, ctx)
 	}
@@ -132,7 +132,7 @@ func PromptLogin(app *firebase.App, ctx context.Context) (context.Context, error
 	return ctx, nil
 }
 
-func emailValid(email string) bool {
+func EmailValid(email string) bool {
 	_, err := mail.ParseAddress(email)
 	return err == nil
 }
