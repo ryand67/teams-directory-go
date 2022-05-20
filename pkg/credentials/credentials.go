@@ -9,27 +9,47 @@ import (
 	"strings"
 
 	firebase "firebase.google.com/go/v4"
-	"firebase.google.com/go/v4/auth"
+	"google.golang.org/api/iterator"
 )
+
+type User struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
 
 func Login(ctx context.Context, app *firebase.App, e string, p string) (context.Context, error) {
 	return ctx, nil
 }
 
 func SignUp(ctx context.Context, e string, p string, app *firebase.App) (context.Context, error) {
-	client, err := app.Auth(ctx)
+	client, err := app.Firestore(ctx)
 	if err != nil {
+		fmt.Println(err)
 		panic(err.Error())
+	}
+	defer client.Close()
+
+	iter := client.Collection("users").Where("Email", "==", e).Documents(ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if doc != nil {
+			fmt.Println("User exists with that email")
+			panic("User exists with that email")
+		}
 	}
 	
-	params := (&auth.UserToCreate{}).Email(e).Password(p)
-
-	u, err := client.CreateUser(ctx, params)
+	_, _, err = client.Collection("users").Add(ctx, &User{
+		Email: e,
+		Password: p,
+	})
 	if err != nil {
-		panic(err.Error())
+		log.Fatalf("Failed adding user: %v", err)
 	}
 
-	log.Printf("Successfully created user: %v\n%v", e, u)
+	log.Printf("Successfully created user: %v\n", e)
 	ctx = context.WithValue(ctx, "user", e)
 
 	return ctx, nil
@@ -39,7 +59,6 @@ func PromptLogin(app *firebase.App, ctx context.Context) (context.Context, error
 	// catches panics
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println("Recovered from panic")
 			PromptLogin(app, ctx)
 		}
 	}()
