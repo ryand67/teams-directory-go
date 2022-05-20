@@ -18,6 +18,31 @@ type User struct {
 }
 
 func Login(ctx context.Context, app *firebase.App, e string, p string) (context.Context, error) {
+	client, err := app.Firestore(ctx)
+	if err != nil {
+		fmt.Println(err)
+		panic(err.Error())
+	}
+	defer client.Close()
+
+	var userDoc map[string]interface{}
+	iter := client.Collection("users").Where("Email", "==", e).Documents(ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if doc != nil {
+			userDoc = doc.Data()
+		}
+	}
+
+	if userDoc["Password"] != p {
+		fmt.Println("Wrong username and/or password")
+		panic("Wrong username and/or password")
+	}
+
+	ctx = context.WithValue(ctx, "user", userDoc["Email"])
 	return ctx, nil
 }
 
@@ -95,6 +120,7 @@ func PromptLogin(app *firebase.App, ctx context.Context) (context.Context, error
 		}
 	} else if strings.ToUpper(sOrL) == "L" {
 		c, err := Login(ctx, app, e, p)
+		ctx = c
 		if err != nil {
 			return c, err
 		}
