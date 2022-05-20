@@ -12,24 +12,21 @@ import (
 	"firebase.google.com/go/v4/auth"
 )
 
-func Login(app *firebase.App, e string, p string) error {
-	// ctx := context.Background()
-	return nil
+func Login(ctx context.Context, app *firebase.App, e string, p string) (context.Context, error) {
+	return ctx, nil
 }
 
 func SignUp(ctx context.Context, e string, p string, app *firebase.App) (context.Context, error) {
 	client, err := app.Auth(ctx)
 	if err != nil {
-		log.Fatalf("Error creating auth util: %v\n", err)
-		return nil, err
+		panic(err.Error())
 	}
 	
 	params := (&auth.UserToCreate{}).Email(e).Password(p)
 
 	u, err := client.CreateUser(ctx, params)
 	if err != nil {
-		log.Fatalf("Error creating user: %v\n", err)
-		return nil, err
+		panic(err.Error())
 	}
 
 	log.Printf("Successfully created user: %v\n%v", e, u)
@@ -39,6 +36,14 @@ func SignUp(ctx context.Context, e string, p string, app *firebase.App) (context
 }
 
 func PromptLogin(app *firebase.App, ctx context.Context) (context.Context, error) {
+	// catches panics
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic")
+			PromptLogin(app, ctx)
+		}
+	}()
+
 	fmt.Println("Sign-up, Login, or Exit? (S/L/Exit)")
 
 	// Sign up or login
@@ -55,7 +60,7 @@ func PromptLogin(app *firebase.App, ctx context.Context) (context.Context, error
 	e = strings.TrimSpace(e)
 
 	if valid := emailValid(e); !valid {
-		log.Println("Need a valid email!")
+		log.Println("Need a valid email.")
 		PromptLogin(app, ctx)
 	}
 	
@@ -65,11 +70,15 @@ func PromptLogin(app *firebase.App, ctx context.Context) (context.Context, error
 
 	if strings.ToUpper(sOrL) == "S" {
 		c, err := SignUp(ctx, e, p, app)
+		ctx = c
 		if err != nil {
 			return c, err
 		}
 	} else if strings.ToUpper(sOrL) == "L" {
-		Login(app, e, p)
+		c, err := Login(ctx, app, e, p)
+		if err != nil {
+			return c, err
+		}
 	} else {
 		log.Println("Need a valid response (S/L/Exit)")
 		PromptLogin(app, ctx)

@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	// init "global" context
 	ctx := context.Background()
 
 	// Creates new firebase app instance
