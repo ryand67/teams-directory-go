@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
+	f "fmt"
 	"log"
+	s "strings"
 
 	"github.com/ryand67/teams-directory-go/credentials"
 	"github.com/ryand67/teams-directory-go/firebase"
+	"github.com/ryand67/teams-directory-go/team"
 )
 
 func main() {
@@ -19,7 +21,7 @@ func main() {
 	flag.Parse()
 
 	if !credentials.EmailValid(*unFlag) {
-		fmt.Println("Provided command line username invalid email format")
+		f.Println("Provided command line username invalid email format")
 	}
 
 	// Creates new firebase app instance
@@ -39,5 +41,20 @@ func main() {
 			log.Fatalf(err.Error())
 		}
 		ctx = c
+	}
+
+	for {
+		f.Print("> ")
+		var cmd string
+		f.Scanln(&cmd)
+
+		switch s.ToLower(cmd) {
+		case "team-list", "tl":
+			team.TeamList(ctx, app, "team")
+		case "exit", "x", "e":
+			log.Fatalf("Program terminated by user.")
+		default:
+			f.Println("Invalid command, exec 'help' for list of commands.")
+		}
 	}
 }
