@@ -33,6 +33,7 @@ func Login(ctx context.Context, app *firebase.App, e string, p string) (context.
 			break
 		}
 		if doc != nil {
+			ctx = context.WithValue(ctx, "docId", doc.Ref.ID)
 			userDoc = doc.Data()
 		}
 	}
