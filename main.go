@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	f "fmt"
 	"log"
 	s "strings"
@@ -55,7 +56,10 @@ func main() {
 		case "team-list", "tl":
 			team.TeamList(ctx, app)
 		case "add-team", "at":
-			team.AddTeam(ctx, app)
+			err := team.AddTeam(ctx, app)
+			if err != nil {
+				fmt.Println(err)
+			}
 		case "exit", "x", "e":
 			log.Fatalf("Program terminated by user.")
 		case "help", "doc", "h", "d":

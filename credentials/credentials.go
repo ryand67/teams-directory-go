@@ -9,13 +9,10 @@ import (
 	"strings"
 
 	firebase "firebase.google.com/go/v4"
+	"github.com/ryand67/teams-directory-go/team"
 	"google.golang.org/api/iterator"
 )
 
-type User struct {
-	Email string `json:"email"`
-	Password string `json:"password"`
-}
 
 func Login(ctx context.Context, app *firebase.App, e string, p string) (context.Context, error) {
 	client, err := app.Firestore(ctx)
@@ -67,9 +64,10 @@ func SignUp(ctx context.Context, e string, p string, app *firebase.App) (context
 		}
 	}
 	
-	_, _, err = client.Collection("users").Add(ctx, &User{
+	_, _, err = client.Collection("users").Add(ctx, &team.User{
 		Email: e,
 		Password: p,
+		Teams: []team.Team{},
 	})
 	if err != nil {
 		log.Fatalf("Failed adding user: %v", err)
