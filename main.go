@@ -49,7 +49,8 @@ func main() {
 		// Read command
 		f.Print("> ")
 		var cmd string
-		f.Scanln(&cmd)
+		var arg1 string
+		f.Scanln(&cmd, &arg1)
 
 		// Execute commands
 		switch s.ToLower(cmd) {
@@ -63,7 +64,7 @@ func main() {
 		case "exit", "x", "e":
 			log.Fatalf("Program terminated by user.")
 		case "help", "doc", "h", "d":
-			util.Help()
+			util.Help(arg1)
 		default:
 			f.Println("Invalid command, exec 'help' or 'doc' for list of commands.")
 		}
