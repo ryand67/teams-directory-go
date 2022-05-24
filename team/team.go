@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
@@ -54,7 +55,7 @@ func GetDoc(ctx context.Context, app *firebase.App) map[string]interface{} {
 func TeamList(ctx context.Context, app *firebase.App) {
 	doc := GetDoc(ctx, app)
 
-	teamList, ok := doc["teams"]
+	teamList, ok := doc["Teams"]
 
 	if ok == true {
 		for k := range teamList.(map[string]interface{}) {
@@ -82,7 +83,13 @@ func AddTeam(ctx context.Context, app *firebase.App) error {
 
 	// Grab doc to append values
 	doc := GetDoc(ctx, app)
-	teamList, ok := doc["teams"]
+	teamList, ok := doc["Teams"]
+
+	for k := range teamList.(map[string]interface{}) {
+		if strings.ToUpper(k) == strings.ToUpper(newName) {
+			return errors.New("Team name already exists!")
+		}
+	}
 
 	if ok == true {
 		teamList = append(teamList.([]interface{}), &Team{
